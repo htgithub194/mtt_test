@@ -70,20 +70,17 @@ int temp410() {
 ### Problem 2
 
 
-* To detect the problem, I do the following step:
+* Because there is no source code. To detect the problem, I do the following steps:
 
     * Dump asm code:
     ```shell
     objdump -d problem2 > asm
     ```
-    * Look in to the dumped asm code, and see that it quite same with problem1.
+    * Look in to the dumped asm code, and see that it's quite same with problem1.
 
     * Using GDB to place debug break
 
     * After several tries, I found the bug in function *temp4245*
-
-    * But I can not do anything to fix it.
-    Asm code is not my strong point.
 
     ```asm
     000000000001bacf <temp4245>:
@@ -105,3 +102,38 @@ int temp410() {
    1bb05:	c3                   	ret
     ```
 
+* To fix this problem, I propose to replace the call to *temp4245* to *NOP*, because I do not know much about this kind of issue; I just try to bypass the crash.
+
+* The steps are:
+
+    * open the executed file in *radare2*
+    
+    * goto address 0xde0f
+
+    * replace *NOP* to the call to *temp4245* 
+
+    * Run the new executed file, no crash.
+
+```shell
+r2 -w problem2
+s 0xde0f            # seek to addr
+pd 10               # show 10 next instructions
+wao+nop             # replace current instruction to NOP
+wao+nop             # replace current instruction to NOP
+wao+nop             # replace current instruction to NOP
+q                   # quit
+```
+
+* Create patch file using *bsdiff*
+
+```shell
+# bsdiff old_f      new_f      out_patch_F
+bsdiff problem2 edit_problem2 patch.bsdiff
+```
+
+* To apply the patch:
+
+```shell
+# bspatch old_f     out_F       patch_F
+bspatch problem2 problem2_apply_fix patch.bsdiff
+```

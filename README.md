@@ -9,7 +9,7 @@
 
 * Here are some manual test:
 
-```shell
+```sh
 # build 
 gcc mtt_ping.c -o mtt_ping
 
@@ -73,7 +73,7 @@ int temp410() {
 * Because there is no source code. To detect the problem, I do the following steps:
 
     * Dump asm code:
-    ```shell
+    ```sh
     objdump -d problem2 > asm
     ```
     * Look in to the dumped asm code, and see that it's quite same with problem1.
@@ -114,7 +114,7 @@ int temp410() {
 
     * Run the new executed file, no crash.
 
-```shell
+```sh
 r2 -w problem2
 s 0xde0f            # seek to addr
 pd 10               # show 10 next instructions
@@ -126,14 +126,14 @@ q                   # quit
 
 * Create patch file using *bsdiff*
 
-```shell
+```sh
 # bsdiff old_f      new_f      out_patch_F
 bsdiff problem2 edit_problem2 patch.bsdiff
 ```
 
 * To apply the patch:
 
-```shell
+```sh
 # bspatch old_f     out_F       patch_F
 bspatch problem2 problem2_apply_fix patch.bsdiff
 ```
